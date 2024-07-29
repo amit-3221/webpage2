@@ -1,0 +1,3 @@
+sklearn
+pandas
+scikit-learn==1.5.1
