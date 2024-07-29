@@ -5,20 +5,20 @@ import pandas as pd
 conn = sqlite3.connect("data.db")
 c = conn.cursor()
 def create_usertable():
-    c.execute('CREATE TABLE IF NOT EXISTS userstable (firstname TEXT, lastname TEXT, mobile TEXT, email2 TEXT, AGE TEXT, password2 TEXT, confirnpassword TEXT)')
+    c.execute('CREATE TABLE IF NOT EXISTS userstable (firstname TEXT, lastname TEXT, mobile TEXT, email2 TEXT, AGE TEXT, password2 TEXT, cpassword TEXT)')
 def add_userdata (FirstName, LastName, Mobile, Age, Email, password, Cpassword):
-    c.execute('INSERT INTO userstable (firstname,lastname,mobile,email2, AGE ,password2,confirnpassword) VALUES (?,?,?,?,?,?,?)', (firstname, lastname, mobile,  email2, AGE ,password2,confirnpassword))
+    c.execute('INSERT INTO userstable (firstname,lastname,mobile,email2, AGE ,password2,cpassword) VALUES (?,?,?,?,?,?,?)', (firstname, lastname, mobile,  email2, AGE ,password2,cpassword))
     conn.commit() 
-def login_user(Email, password):
-    c.execute('SELECT * FROM userstable WHERE email2 =? AND password2 = ?', (Email, password))
+def login_user(email, password):
+    c.execute('SELECT * FROM userstable WHERE email2 =? AND password2 = ?', (email, password))
     data = c.fetchall()
     return data        
 def view_all_users():
     c.execute('SELECT * FROM userstable')
     data = c.fetchall()
     return data
-def delete_user(Email):
-    c.execute("DELETE FROM userstable WHERE email2-" "*"+Email+"'")
+def delete_user(email):
+    c.execute("DELETE FROM userstable WHERE email2-" "*"+email+"'")
     conn.commit()
 
 def validate_email(email):
@@ -57,13 +57,13 @@ if select=="signup":
     email2 = st.text_input("enter your email2",)
     AGE = st.slider("select the age",1,100)
     password2=st.text_input("enter your password2",type="password")
-    confirnpassword=st.text_input("enter your confirmpassword",type="password")
+    cpassword=st.text_input("enter your confirmpassword",type="password")
     if  st.button("register"):
         if validate_email(email2):
             if  validate_mobile(mobile):
                 if validate_password(password2):
                     create_usertable()
-                    add_userdata(firstname,lastname, mobile, AGE , email2, password2,confirnpassword)
+                    add_userdata(firstname, lastname, mobile, AGE, email2, password2, cpassword)
                     
                     st.success("Sucess Signup")
                 else:
@@ -82,14 +82,14 @@ if select=="login" :
     email = st.sidebar.text_input("enter your email",)
     password=st.sidebar.text_input("enter your password",type="password")
     if st.sidebar.checkbox("submit"):
-        result = login_user(email,  password)
+        result=login_user(email,password)
         if result:
-            st.success("Logged In as {}".format(email))
+            st.success("logged IS as{}".format(email))
             email=st.text_input("Delete email")
-            if st.button('Delete'):
+            if st.button('delete'):
                 delete_user(email)
-            user_result = view_all_users()
-            clean_db =pd.DataFrame(user_result,columns=["firstName", "lastName", "mobile", "email2", "AGE", "password2", "Conifnpassword"])
+            user_result=view_all_users()
+            clean_db=pd.DataFrame(user_result,columns=["firstname","lastname","Mobile","email2","AGE","password2","cpassword"])
             st.dataframe(clean_db)
             import pickle
             model=pickle.load(open("crop.pkl",'rb'))
